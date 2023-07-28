@@ -7,19 +7,19 @@ DROP TABLE IF EXISTS comptebancaire CASCADE;
 CREATE TABLE conseiller
 (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY ,
-    lastName VARCHAR NOT NULL ,
-    firstName VARCHAR NOT NULL
+    lastname VARCHAR NOT NULL ,
+    firstname VARCHAR NOT NULL
 );
 
 CREATE TABLE client
 (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY ,
-    lastName VARCHAR NOT NULL ,
-    firstName VARCHAR NOT NULL ,
+    lastname VARCHAR NOT NULL ,
+    firstname VARCHAR NOT NULL ,
     address VARCHAR NOT NULL ,
     city VARCHAR NOT NULL,
-    zipCode INT NOT NULL ,
-    phoneNumber VARCHAR NOT NULL ,
+    zipcode INT NOT NULL ,
+    phonenumber VARCHAR NOT NULL ,
     id_conseiller INT,
     FOREIGN KEY (id_conseiller) REFERENCES conseiller (id)
 );
@@ -27,10 +27,10 @@ CREATE TABLE client
 CREATE TABLE compteBancaire
 (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    numeroDeCompte SERIAL NOT NULL,
+    numerodecompte SERIAL NOT NULL,
     solde NUMERIC NOT NULL ,
-    typeDeCompte VARCHAR NOT NULL ,
-    createdAt VARCHAR NOT NULL ,
+    typedecompte VARCHAR NOT NULL ,
+    createdat VARCHAR NOT NULL ,
     id_client INT,
     FOREIGN KEY (id_client) REFERENCES client (id)
 );
