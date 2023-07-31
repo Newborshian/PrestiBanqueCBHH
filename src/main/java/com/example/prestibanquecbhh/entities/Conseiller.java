@@ -18,7 +18,7 @@ public class Conseiller {
     @Column(name = "id")
     private Integer id;
     @Column(name = "lastname")
-    private String name;
+    private String lastname;
     @Column(name = "firstname")
     private String firstName;
 }
