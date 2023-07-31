@@ -21,7 +21,4 @@ public class Conseiller {
     private String name;
     @Column(name = "firstname")
     private String firstName;
-    //@OneToMany(mappedBy = "conseiller")
-    //private Set<Client> clientSet = new HashSet<>();
-
 }

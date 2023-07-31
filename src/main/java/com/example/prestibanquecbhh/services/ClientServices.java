@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClientServices {
-
     List<Client> getAllClient();
     Client saveClient(ClientDto client);
     void deleteClient(Integer id);

@@ -1,11 +1,28 @@
 package com.example.prestibanquecbhh.entities;
 
-public class CompteEpargne extends CompteBancaire{
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-    private final Double tauxInteret;
+@Getter
+@Setter
+@Entity
+@Table(name = "compteepargne")
+public class CompteEpargne {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+    @Column(name = "numerodecompte")
+    private Integer numerodecompte;
+    @Column(name = "solde")
+    private Double solde;
+    @Column(name = "createdat")
+    private String createdat;
+    @ManyToOne
+    @JoinColumn(name = "id_client")
+    private Client client;
+    @Column(name = "tauxinteret")
+    private Double tauxInteret;
 
-    public CompteEpargne(Integer numeroDeCompte, String typeDeCompte, Double solde) {
-        super(numeroDeCompte, typeDeCompte, solde);
-        this.tauxInteret = 0.3;
-    }
 }
