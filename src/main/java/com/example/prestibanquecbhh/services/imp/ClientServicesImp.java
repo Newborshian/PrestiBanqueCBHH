@@ -2,26 +2,25 @@ package com.example.prestibanquecbhh.services.imp;
 
 import com.example.prestibanquecbhh.dtos.ClientDto;
 import com.example.prestibanquecbhh.entities.Client;
-import com.example.prestibanquecbhh.repositories.ClientRepositoty;
+import com.example.prestibanquecbhh.repositories.ClientRepository;
 import com.example.prestibanquecbhh.repositories.ConseillerRepository;
 import com.example.prestibanquecbhh.services.ClientServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ClientServicesImp implements ClientServices {
 
     @Autowired
-    private ClientRepositoty clientRepositoty;
+    private ClientRepository clientRepository;
     @Autowired
     private ConseillerRepository conseillerRepository;
 
     @Override
     public List<Client> getAllClient() {
-        return clientRepositoty.findAll();
+        return clientRepository.findAll();
     }
 
     @Override
@@ -34,17 +33,17 @@ public class ClientServicesImp implements ClientServices {
         newClient.setZipcode(client.getZipcode());
         newClient.setPhonenumber(client.getPhonenumber());
         newClient.setConseiller(conseillerRepository.findById(client.getId_conseiller()).get());
-        return clientRepositoty.saveAndFlush(newClient);
+        return clientRepository.saveAndFlush(newClient);
     }
 
     @Override
     public void deleteClient(Integer id) {
-        clientRepositoty.deleteById(id);
+        clientRepository.deleteById(id);
     }
 
     @Override
     public Client updateClient(Integer id, ClientDto client) {
-        Client existingClient = clientRepositoty.findById(id).get();
+        Client existingClient = clientRepository.findById(id).get();
         existingClient.setLastname(client.getLastname());
         existingClient.setFirstname(client.getFirstname());
         existingClient.setCity(client.getCity());
@@ -52,6 +51,6 @@ public class ClientServicesImp implements ClientServices {
         existingClient.setPhonenumber(client.getPhonenumber());
         existingClient.setZipcode(client.getZipcode());
         existingClient.setConseiller(conseillerRepository.findById(client.getId_conseiller()).get());
-        return clientRepositoty.save(existingClient);
+        return clientRepository.save(existingClient);
     }
 }

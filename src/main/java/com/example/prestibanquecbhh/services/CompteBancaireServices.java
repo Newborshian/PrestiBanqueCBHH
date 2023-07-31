@@ -1,8 +1,8 @@
 package com.example.prestibanquecbhh.services;
 
 import com.example.prestibanquecbhh.dtos.CompteBancaireDto;
-import com.example.prestibanquecbhh.dtos.CreateCompteBancaireDto;
-import com.example.prestibanquecbhh.dtos.VirementDto;
+import com.example.prestibanquecbhh.models.CreateCompteBancaireModel;
+import com.example.prestibanquecbhh.models.VirementModel;
 import com.example.prestibanquecbhh.entities.CompteCourant;
 import com.example.prestibanquecbhh.entities.CompteEpargne;
 
@@ -12,11 +12,11 @@ public interface CompteBancaireServices {
 
     CompteBancaireDto toDto(CompteCourant compteCourant);
     CompteBancaireDto toDto(CompteEpargne compteEpargne);
-    CompteBancaireDto createBankAccount(CreateCompteBancaireDto createCompteBancaireDto);
+    CompteBancaireDto createBankAccount(CreateCompteBancaireModel createCompteBancaireModel);
     void deletedBankAccount(Integer typeDeCompte, Integer id);
     List<CompteBancaireDto> getAllCompteBancaire();
     List<CompteBancaireDto> bankAccountNegativePay();
 
-    String virement(VirementDto virementDto);
+    String virement(VirementModel virementModel);
 
 }

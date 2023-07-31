@@ -1,11 +1,11 @@
-package com.example.prestibanquecbhh.dtos;
+package com.example.prestibanquecbhh.models;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class VirementDto {
+public class VirementModel {
     private Integer numerodecompteCrediteur;
     private Integer numeroDeCompteDebiteur;
     private Double montant;

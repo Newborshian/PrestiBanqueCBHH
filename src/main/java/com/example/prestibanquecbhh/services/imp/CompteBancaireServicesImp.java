@@ -1,12 +1,12 @@
 package com.example.prestibanquecbhh.services.imp;
 
 import com.example.prestibanquecbhh.dtos.CompteBancaireDto;
-import com.example.prestibanquecbhh.dtos.CreateCompteBancaireDto;
-import com.example.prestibanquecbhh.dtos.VirementDto;
+import com.example.prestibanquecbhh.models.CreateCompteBancaireModel;
+import com.example.prestibanquecbhh.models.VirementModel;
 import com.example.prestibanquecbhh.entities.CompteCourant;
 import com.example.prestibanquecbhh.entities.CompteEpargne;
 import com.example.prestibanquecbhh.enums.TypeDeCompte;
-import com.example.prestibanquecbhh.repositories.ClientRepositoty;
+import com.example.prestibanquecbhh.repositories.ClientRepository;
 import com.example.prestibanquecbhh.repositories.CompteCourantRepository;
 import com.example.prestibanquecbhh.repositories.CompteEpargneRepository;
 import com.example.prestibanquecbhh.services.CompteBancaireServices;
@@ -22,7 +22,7 @@ public class CompteBancaireServicesImp implements CompteBancaireServices {
     @Autowired
     private CompteEpargneRepository compteEpargneRepository;
     @Autowired
-    private ClientRepositoty clientRepositoty;
+    private ClientRepository clientRepository;
     @Autowired
     private CompteCourantRepository compteCourantRepository;
 
@@ -51,25 +51,25 @@ public class CompteBancaireServicesImp implements CompteBancaireServices {
     }
 
     @Override
-    public CompteBancaireDto createBankAccount(CreateCompteBancaireDto createCompteBancaireDto) {
-        if (!createCompteBancaireDto.getIsEpargne()){
+    public CompteBancaireDto createBankAccount(CreateCompteBancaireModel createCompteBancaireModel) {
+        if (!createCompteBancaireModel.getIsEpargne()){
           CompteCourant compteCourant = new CompteCourant();
-          compteCourant.setNumerodecompte(createCompteBancaireDto.getNumerodecompte());
-          compteCourant.setSolde(createCompteBancaireDto.getSolde());
-          compteCourant.setCreatedat(createCompteBancaireDto.getCreatedat());
-          compteCourant.setClient(clientRepositoty.findById(createCompteBancaireDto.getId_client()).get());
-          compteCourant.setCard(createCompteBancaireDto.getCard());
-          compteCourant.setOverdraft(createCompteBancaireDto.getOverDraft());
+          compteCourant.setNumerodecompte(createCompteBancaireModel.getNumerodecompte());
+          compteCourant.setSolde(createCompteBancaireModel.getSolde());
+          compteCourant.setCreatedat(createCompteBancaireModel.getCreatedat());
+          compteCourant.setClient(clientRepository.findById(createCompteBancaireModel.getId_client()).get());
+          compteCourant.setCard(createCompteBancaireModel.getCard());
+          compteCourant.setOverdraft(createCompteBancaireModel.getOverDraft());
           compteCourantRepository.save(compteCourant);
           return toDto(compteCourant);
 
         } else {
             CompteEpargne compteEpargne = new CompteEpargne();
-            compteEpargne.setNumerodecompte(createCompteBancaireDto.getNumerodecompte());
-            compteEpargne.setSolde(createCompteBancaireDto.getSolde());
-            compteEpargne.setCreatedat(createCompteBancaireDto.getCreatedat());
-            compteEpargne.setClient(clientRepositoty.findById(createCompteBancaireDto.getId_client()).get());
-            compteEpargne.setTauxInteret(createCompteBancaireDto.getTauxInteret());
+            compteEpargne.setNumerodecompte(createCompteBancaireModel.getNumerodecompte());
+            compteEpargne.setSolde(createCompteBancaireModel.getSolde());
+            compteEpargne.setCreatedat(createCompteBancaireModel.getCreatedat());
+            compteEpargne.setClient(clientRepository.findById(createCompteBancaireModel.getId_client()).get());
+            compteEpargne.setTauxInteret(createCompteBancaireModel.getTauxInteret());
             compteEpargneRepository.save(compteEpargne);
             return toDto(compteEpargne);
         }
@@ -112,13 +112,13 @@ public class CompteBancaireServicesImp implements CompteBancaireServices {
     }
 
     @Override
-    public String virement(VirementDto virementDto) {
-        CompteCourant compteCourantCrediteur = compteCourantRepository.findByNumerodecompte(virementDto.getNumerodecompteCrediteur());
-        CompteCourant compteCourantDebiteur = compteCourantRepository.findByNumerodecompte(virementDto.getNumeroDeCompteDebiteur());
+    public String virement(VirementModel virementModel) {
+        CompteCourant compteCourantCrediteur = compteCourantRepository.findByNumerodecompte(virementModel.getNumerodecompteCrediteur());
+        CompteCourant compteCourantDebiteur = compteCourantRepository.findByNumerodecompte(virementModel.getNumeroDeCompteDebiteur());
 
-        if ( compteCourantCrediteur.getSolde() + compteCourantCrediteur.getOverdraft() >= virementDto.getMontant()) {
-            compteCourantCrediteur.setSolde(compteCourantCrediteur.getSolde() - virementDto.getMontant());
-            compteCourantDebiteur.setSolde(compteCourantDebiteur.getSolde() + virementDto.getMontant());
+        if ( compteCourantCrediteur.getSolde() + compteCourantCrediteur.getOverdraft() >= virementModel.getMontant()) {
+            compteCourantCrediteur.setSolde(compteCourantCrediteur.getSolde() - virementModel.getMontant());
+            compteCourantDebiteur.setSolde(compteCourantDebiteur.getSolde() + virementModel.getMontant());
             compteCourantRepository.save(compteCourantCrediteur);
             compteCourantRepository.save(compteCourantDebiteur);
             return "Virement effectué" + compteCourantCrediteur.getSolde() + " " + compteCourantDebiteur.getSolde() ;

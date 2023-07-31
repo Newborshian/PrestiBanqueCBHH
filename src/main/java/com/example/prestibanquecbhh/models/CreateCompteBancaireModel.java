@@ -1,11 +1,11 @@
-package com.example.prestibanquecbhh.dtos;
+package com.example.prestibanquecbhh.models;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateCompteBancaireDto {
+public class CreateCompteBancaireModel {
 
     private Integer numerodecompte;
     private Boolean isEpargne;

@@ -1,9 +1,8 @@
 package com.example.prestibanquecbhh.controllers;
 
 import com.example.prestibanquecbhh.dtos.CompteBancaireDto;
-import com.example.prestibanquecbhh.dtos.CreateCompteBancaireDto;
-import com.example.prestibanquecbhh.dtos.VirementDto;
-import com.example.prestibanquecbhh.entities.CompteCourant;
+import com.example.prestibanquecbhh.models.CreateCompteBancaireModel;
+import com.example.prestibanquecbhh.models.VirementModel;
 import com.example.prestibanquecbhh.services.CompteBancaireServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,9 +19,9 @@ public class CompteBancaireController {
     private CompteBancaireServices compteBancaireServices;
 
     @PostMapping
-    public ResponseEntity<CompteBancaireDto> creerCompteBancaire(@RequestBody CreateCompteBancaireDto createCompteBancaireDto){
+    public ResponseEntity<CompteBancaireDto> creerCompteBancaire(@RequestBody CreateCompteBancaireModel createCompteBancaireModel){
         try {
-            CompteBancaireDto compteBancaireDto = compteBancaireServices.createBankAccount(createCompteBancaireDto);
+            CompteBancaireDto compteBancaireDto = compteBancaireServices.createBankAccount(createCompteBancaireModel);
             return new ResponseEntity(compteBancaireDto, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -58,9 +57,9 @@ public class CompteBancaireController {
     }
 
     @PutMapping("/virement")
-    public ResponseEntity<String> virement(@RequestBody VirementDto virementDto){
+    public ResponseEntity<String> virement(@RequestBody VirementModel virementModel){
         try {
-            return new ResponseEntity<>(compteBancaireServices.virement(virementDto), HttpStatus.OK);
+            return new ResponseEntity<>(compteBancaireServices.virement(virementModel), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
