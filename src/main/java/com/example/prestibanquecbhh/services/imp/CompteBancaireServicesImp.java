@@ -53,17 +53,20 @@ public class CompteBancaireServicesImp implements CompteBancaireServices {
     @Override
     public CompteBancaireDto createBankAccount(CreateCompteBancaireModel createCompteBancaireModel) {
         if (!createCompteBancaireModel.getIsEpargne()){
-          CompteCourant compteCourant = new CompteCourant();
-          compteCourant.setNumerodecompte(createCompteBancaireModel.getNumerodecompte());
-          compteCourant.setSolde(createCompteBancaireModel.getSolde());
-          compteCourant.setCreatedat(createCompteBancaireModel.getCreatedat());
-          compteCourant.setClient(clientRepository.findById(createCompteBancaireModel.getId_client()).get());
-          compteCourant.setCard(createCompteBancaireModel.getCard());
-          compteCourant.setOverdraft(createCompteBancaireModel.getOverDraft());
-          compteCourantRepository.save(compteCourant);
-          return toDto(compteCourant);
+            if (clientRepository.existsById(createCompteBancaireModel.getId_client())){
+                CompteCourant compteCourant = new CompteCourant();
+                compteCourant.setNumerodecompte(createCompteBancaireModel.getNumerodecompte());
+                compteCourant.setSolde(createCompteBancaireModel.getSolde());
+                compteCourant.setCreatedat(createCompteBancaireModel.getCreatedat());
+                compteCourant.setClient(clientRepository.findById(createCompteBancaireModel.getId_client()).get());
+                compteCourant.setCard(createCompteBancaireModel.getCard());
+                compteCourant.setOverdraft(createCompteBancaireModel.getOverDraft());
+                compteCourantRepository.save(compteCourant);
+                return toDto(compteCourant);
+            } else throw new RuntimeException("Pourquoi veut tu créer un compte courant sans client ? FRAUDE FISCAL SUSPECTER");
 
-        } else {
+
+        } else if (clientRepository.existsById(createCompteBancaireModel.getId_client())){
             CompteEpargne compteEpargne = new CompteEpargne();
             compteEpargne.setNumerodecompte(createCompteBancaireModel.getNumerodecompte());
             compteEpargne.setSolde(createCompteBancaireModel.getSolde());
@@ -72,27 +75,30 @@ public class CompteBancaireServicesImp implements CompteBancaireServices {
             compteEpargne.setTauxInteret(createCompteBancaireModel.getTauxInteret());
             compteEpargneRepository.save(compteEpargne);
             return toDto(compteEpargne);
-        }
+        } else throw new RuntimeException("Comment tu fais pour toujours faire de la merde ? Créer un compte épargne n'appartant à personne ? WTF");
 
     }
 
     @Override
     public void deletedBankAccount(Integer typeDeCompte, Integer id) {
-        if (typeDeCompte == 1){
+        if (typeDeCompte == 1 && compteEpargneRepository.existsById(id)){
             compteEpargneRepository.deleteById(id);
-        } else if (typeDeCompte == 2){
+        } else if (typeDeCompte == 2 && compteCourantRepository.existsById(id)){
             compteCourantRepository.deleteById(id);
-        }
+        } else throw new RuntimeException("Sérieusement, pourquoi supprimer un compte bancaire qui n'existe pas ?");
     }
 
     @Override
     public List<CompteBancaireDto> bankAccountNegativePay() {
        List<CompteCourant> compteCourantList = compteCourantRepository.findAllBySoldeLessThan(0);
        List<CompteBancaireDto> compteBancaireDtoList = new ArrayList<>();
-       for (CompteCourant compteCourant : compteCourantList){
-           compteBancaireDtoList.add(toDto(compteCourant));
-       }
-       return compteBancaireDtoList;
+       if (!compteCourantList.isEmpty()){
+           for (CompteCourant compteCourant : compteCourantList){
+               compteBancaireDtoList.add(toDto(compteCourant));
+           }
+           return compteBancaireDtoList;
+       } else throw new RuntimeException("Incroyable, aucun compte de client n'est à découvert !! c'est un miracle !!!!");
+
     }
 
     @Override
@@ -101,13 +107,17 @@ public class CompteBancaireServicesImp implements CompteBancaireServices {
         List<CompteBancaireDto> compteBancaireDtoList = new ArrayList<>();
         List<CompteCourant> compteCourantList = compteCourantRepository.findAll();
         List<CompteEpargne> compteEpargneList = compteEpargneRepository.findAll();
-        for (CompteCourant compteCourant : compteCourantList){
-            compteBancaireDtoList.add(toDto(compteCourant));
-        }
-        for (CompteEpargne compteEpargne : compteEpargneList){
-            compteBancaireDtoList.add(toDto(compteEpargne));
-        }
-        return compteBancaireDtoList;
+
+        if (!compteCourantList.isEmpty() || !compteEpargneList.isEmpty()){
+            for (CompteCourant compteCourant : compteCourantList){
+                compteBancaireDtoList.add(toDto(compteCourant));
+            }
+            for (CompteEpargne compteEpargne : compteEpargneList){
+                compteBancaireDtoList.add(toDto(compteEpargne));
+            }
+            return compteBancaireDtoList;
+        } else throw new RuntimeException("C'est triste, personne n'a de compte bancaire dans votre banque");
+
 
     }
 
@@ -117,11 +127,14 @@ public class CompteBancaireServicesImp implements CompteBancaireServices {
         CompteCourant compteCourantDebiteur = compteCourantRepository.findByNumerodecompte(virementModel.getNumeroDeCompteDebiteur());
 
         if ( compteCourantCrediteur.getSolde() + compteCourantCrediteur.getOverdraft() >= virementModel.getMontant()) {
-            compteCourantCrediteur.setSolde(compteCourantCrediteur.getSolde() - virementModel.getMontant());
-            compteCourantDebiteur.setSolde(compteCourantDebiteur.getSolde() + virementModel.getMontant());
-            compteCourantRepository.save(compteCourantCrediteur);
-            compteCourantRepository.save(compteCourantDebiteur);
-            return "Virement effectué" + compteCourantCrediteur.getSolde() + " " + compteCourantDebiteur.getSolde() ;
+            if (virementModel.getMontant() >0){
+                compteCourantCrediteur.setSolde(compteCourantCrediteur.getSolde() - virementModel.getMontant());
+                compteCourantDebiteur.setSolde(compteCourantDebiteur.getSolde() + virementModel.getMontant());
+                compteCourantRepository.save(compteCourantCrediteur);
+                compteCourantRepository.save(compteCourantDebiteur);
+                return "Virement effectué" + compteCourantCrediteur.getSolde() + " " + compteCourantDebiteur.getSolde() ;
+            } else throw new RuntimeException("Un virement négatif ?? Beau concept pour s'enrichir mais malheureusement fonctionellement parlant impossible");
+
         }
         return "Virement impossible :'(";
     }

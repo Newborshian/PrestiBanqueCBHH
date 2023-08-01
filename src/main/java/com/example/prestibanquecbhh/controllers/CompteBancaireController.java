@@ -23,18 +23,19 @@ public class CompteBancaireController {
         try {
             CompteBancaireDto compteBancaireDto = compteBancaireServices.createBankAccount(createCompteBancaireModel);
             return new ResponseEntity(compteBancaireDto, HttpStatus.OK);
-        } catch (Exception e){
+        } catch (RuntimeException e){
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @DeleteMapping("/{typeDeCompte}/{id}")
-    public void deleteCompteBancaire(@PathVariable Integer typeDeCompte, @PathVariable Integer id){
+    public ResponseEntity<String> deleteCompteBancaire(@PathVariable Integer typeDeCompte, @PathVariable Integer id){
         try {
             compteBancaireServices.deletedBankAccount(typeDeCompte, id);
+            return new ResponseEntity<>("Le compte bancaire a bien été supprimé", HttpStatus.OK);
 
-        } catch (Exception e){
-            e.getMessage();
+        } catch (RuntimeException e){
+           return new ResponseEntity( e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -42,7 +43,7 @@ public class CompteBancaireController {
     public ResponseEntity<List<CompteBancaireDto>> getAllCompteBancaire(){
         try {
             return new ResponseEntity<>(compteBancaireServices.getAllCompteBancaire(), HttpStatus.OK);
-        } catch (Exception e){
+        } catch (RuntimeException e){
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -51,7 +52,7 @@ public class CompteBancaireController {
     public ResponseEntity<List<CompteBancaireDto>> getCompteBancaireNegatif(){
         try {
             return new ResponseEntity<>(compteBancaireServices.bankAccountNegativePay(), HttpStatus.OK);
-        } catch (Exception e){
+        } catch (RuntimeException e){
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -60,13 +61,12 @@ public class CompteBancaireController {
     public ResponseEntity<String> virement(@RequestBody VirementModel virementModel){
         try {
             return new ResponseEntity<>(compteBancaireServices.virement(virementModel), HttpStatus.OK);
-        } catch (Exception e){
+        } catch (RuntimeException e){
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-
-    }
+}
 
 
 
