@@ -8,8 +8,10 @@ DROP TABLE IF EXISTS compteepargne CASCADE;
 CREATE TABLE conseiller
 (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY ,
-    lastname VARCHAR NOT NULL ,
-    firstname VARCHAR NOT NULL
+    lastname VARCHAR NOT NULL,
+    firstname VARCHAR NOT NULL,
+    mail VARCHAR NOT NULL UNIQUE,
+    password VARCHAR NOT NULL
 );
 
 CREATE TABLE client
@@ -20,7 +22,7 @@ CREATE TABLE client
     address VARCHAR NOT NULL ,
     city VARCHAR NOT NULL,
     zipcode INT NOT NULL ,
-    phonenumber VARCHAR NOT NULL ,
+    phonenumber VARCHAR NOT NULL UNIQUE ,
     id_conseiller INT,
     FOREIGN KEY (id_conseiller) REFERENCES conseiller (id)
 );
@@ -30,7 +32,7 @@ CREATE TABLE comptecourant
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     card VARCHAR NOT NULL,
     overdraft INT NOT NULL,
-    numerodecompte SERIAL NOT NULL,
+    numerodecompte VARCHAR NOT NULL UNIQUE,
     solde NUMERIC NOT NULL,
     createdat VARCHAR NOT NULL,
     id_client INT,
@@ -41,7 +43,7 @@ CREATE TABLE compteepargne
 (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     tauxinteret NUMERIC NOT NULL,
-    numerodecompte SERIAL NOT NULL,
+    numerodecompte VARCHAR NOT NULL UNIQUE,
     solde NUMERIC NOT NULL ,
     createdat VARCHAR NOT NULL ,
     id_client INT,
@@ -49,10 +51,10 @@ CREATE TABLE compteepargne
 );
 
 
-INSERT INTO conseiller (lastname, firstname)
+INSERT INTO conseiller (lastname, firstname, mail, password)
 VALUES
-    ('Dupont', 'Jean'),
-    ('Martin', 'Sophie');
+    ('Dupont', 'Jean', 'test@test.fr', '1234'),
+    ('Martin', 'Sophie', 'test2@test.fr', '1234');
 
 INSERT INTO client (lastname, firstname, address, city, zipcode, phonenumber, id_conseiller)
 VALUES
